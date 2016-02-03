@@ -66,7 +66,7 @@ RUN \
   rm -rf /var/www/*
   
 RUN sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php/fpm/php.ini && \
-    sed -i -e "s/listen = 127.0.0.1:9000/listen = /var/run/php7-fpm.sock/g" /etc/php/fpm/pool.d/www.conf
+    sed -i -e "s/listen = 127.0.0.1:9000/listen = \/var\/run\/php7-fpm.sock/g" /etc/php/fpm/pool.d/www.conf
 
 ADD root /
 
