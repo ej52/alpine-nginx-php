@@ -59,6 +59,8 @@ RUN \
   make && \
   make install && \
   cp php.ini-production  /etc/php/fpm/php.ini && \
+  cp /usr/etc/php-fpm.conf.default /etc/php/fpm/php-fpm.conf
+  cp /usr/etc/php-fpm.d/www.conf.default /etc/php/fpm/pool.d/www.conf  
   adduser -D www-data && \
   rm -rf /tmp/* && \
   apk del build-base libtool bash perl gcc g++ wget grep tar make autoconf re2c bison && \
