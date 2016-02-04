@@ -4,7 +4,7 @@ MAINTAINER Elton Renda "https://github.com/ej52"
 ENV PHP_VERSION=7.0.1
 
 RUN \
-  apk --no-cache add ca-certificates wget curl curl-dev grep libtool imagemagick-dev gmp-dev libmcrypt-dev \
+  apk --no-cache add ca-certificates wget openssl curl curl-dev grep libtool imagemagick-dev gmp-dev libmcrypt-dev \
   freetype-dev libxpm-dev libwebp-dev libjpeg-turbo-dev libjpeg bzip2-dev openssl-dev krb5-dev libxml2-dev \
   yaml-dev build-base tar make autoconf re2c bison && \
   cd /tmp && \
@@ -65,9 +65,7 @@ RUN \
   mv /etc/php/fpm/php-fpm.d/www.conf.default /etc/php/fpm/php-fpm.d/www.conf && \
   adduser -D www-data && \
   rm -rf /tmp/* && \
-  apk del build-base libtool bash perl gcc g++ wget grep tar make autoconf re2c bison curl-dev \
-  imagemagick-dev gmp-dev libmcrypt-dev freetype-dev libxpm-dev libwebp-dev libjpeg-turbo-dev \
-  bzip2-dev openssl-dev krb5-dev libxml2-dev yaml-dev && \
+  apk del build-base libtool bash perl gcc g++ wget grep tar make autoconf re2c bison curl-dev openssl-dev && \
   rm -rf /var/cache/apk/* && \
   rm -rf /var/www/*
   
