@@ -59,8 +59,8 @@ RUN \
   make && \
   make install && \
   cp php.ini-production  /etc/php/fpm/php.ini && \
-  cp /usr/etc/php-fpm.conf.default /etc/php/fpm/php-fpm.conf
-  cp /usr/etc/php-fpm.d/www.conf.default /etc/php/fpm/pool.d/www.conf  
+  mv /etc/php/fpm/php-fpm.conf.default /etc/php/fpm/php-fpm.conf
+  mv /etc/php/fpm/php-fpm.d/www.conf.default /etc/php/fpm/php-fpm.d/www.conf  
   adduser -D www-data && \
   rm -rf /tmp/* && \
   apk del build-base libtool bash perl gcc g++ wget grep tar make autoconf re2c bison && \
@@ -68,7 +68,7 @@ RUN \
   rm -rf /var/www/*
   
 RUN sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php/fpm/php.ini && \
-    sed -i -e "s/listen = 127.0.0.1:9000/listen = \/var\/run\/php7-fpm.sock/g" /etc/php/fpm/pool.d/www.conf
+    sed -i -e "s/listen = 127.0.0.1:9000/listen = \/var\/run\/php7-fpm.sock/g" /etc/php/fpm/php-fpm.d/www.conf
 
 ADD root /
 
