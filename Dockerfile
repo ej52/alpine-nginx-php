@@ -63,7 +63,6 @@ RUN \
   cp php.ini-production  /etc/php/fpm/php.ini && \
   mv /etc/php/fpm/php-fpm.conf.default /etc/php/fpm/php-fpm.conf && \
   mv /etc/php/fpm/php-fpm.d/www.conf.default /etc/php/fpm/php-fpm.d/www.conf && \
-  adduser -D www-data && \
   rm -rf /tmp/* && \
   apk del build-base libtool bash perl gcc g++ wget grep tar make autoconf re2c bison curl-dev openssl-dev && \
   rm -rf /var/cache/apk/* && \
