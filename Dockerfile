@@ -18,6 +18,9 @@ RUN \
     --with-config-file-path=/etc/php/fpm \
     --with-config-file-scan-dir=/etc/php/fpm/conf.d \
     --enable-fpm \
+    --with-fpm-user=www-data \
+    --with-fpm-group=www-data \
+    --disable-cgi \
     --enable-mysqlnd \
     --enable-exif \
     --enable-ftp \
@@ -38,7 +41,6 @@ RUN \
     --enable-sysvmsg \
     --enable-sysvsem \
     --enable-sysvshm \
-    --disable-cgi \
     --with-curl \
     --with-mcrypt \
     --with-iconv \
@@ -63,14 +65,19 @@ RUN \
   mv /etc/php/fpm/php-fpm.d/www.conf.default /etc/php/fpm/php-fpm.d/www.conf && \
   adduser -D www-data && \
   rm -rf /tmp/* && \
-  apk del build-base libtool bash perl gcc g++ wget grep tar make autoconf re2c bison && \
+  apk del build-base libtool bash perl gcc g++ wget grep tar make autoconf re2c bison curl-dev \
+  imagemagick-dev gmp-dev libmcrypt-dev freetype-dev libxpm-dev libwebp-dev libjpeg-turbo-dev \
+  bzip2-dev openssl-dev krb5-dev libxml2-dev yaml-dev && \
   rm -rf /var/cache/apk/* && \
   rm -rf /var/www/*
   
 RUN sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php/fpm/php.ini && \
     sed -i -e 's!=NONE/!=!g' /etc/php/fpm/php-fpm.conf && \
     sed -i -e 's/;daemonize = yes/daemonize = no/g' /etc/php/fpm/php-fpm.conf && \
-    sed -i -e "s/listen = 127.0.0.1:9000/listen = \/var\/run\/php7-fpm.sock/g" /etc/php/fpm/php-fpm.d/www.conf
+    sed -i -e "s/listen = 127.0.0.1:9000/listen = \/var\/run\/php7-fpm.sock/g" /etc/php/fpm/php-fpm.d/www.conf && \
+    sed -i -e "s/;listen.owner =/listen.owner =/g" /etc/php/fpm/php-fpm.d/www.conf && \
+    sed -i -e "s/;listen.group =/listen.group =/g" /etc/php/fpm/php-fpm.d/www.conf && \
+    sed -i -e "s/;listen.mode =/listen.mode =/g" /etc/php/fpm/php-fpm.d/www.conf
 
 ADD root /
 
