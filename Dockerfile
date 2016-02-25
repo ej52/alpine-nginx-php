@@ -68,13 +68,15 @@ RUN \
   rm -rf /var/cache/apk/* && \
   rm -rf /var/www/*
   
-RUN sed -i -e "s/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g" /etc/php/fpm/php.ini && \
-    sed -i -e 's!=NONE/!=!g' /etc/php/fpm/php-fpm.conf && \
-    sed -i -e 's/;daemonize = yes/daemonize = no/g' /etc/php/fpm/php-fpm.conf && \
-    sed -i -e "s/listen = 127.0.0.1:9000/listen = \/var\/run\/php7-fpm.sock/g" /etc/php/fpm/php-fpm.d/www.conf && \
-    sed -i -e "s/;listen.owner =/listen.owner =/g" /etc/php/fpm/php-fpm.d/www.conf && \
-    sed -i -e "s/;listen.group =/listen.group =/g" /etc/php/fpm/php-fpm.d/www.conf && \
-    sed -i -e "s/;listen.mode =/listen.mode =/g" /etc/php/fpm/php-fpm.d/www.conf
+RUN sed -i -e "s|;cgi.fix_pathinfo=1|cgi.fix_pathinfo=0|g" /etc/php/fpm/php.ini && \
+    sed -i -e 's|=NONE/|=|g' /etc/php/fpm/php-fpm.conf && \
+    sed -i -e 's|;daemonize = yes|daemonize = no|g' /etc/php/fpm/php-fpm.conf && \
+    sed -i -e "s|listen = 127.0.0.1:9000|listen = /var/run/php7-fpm.sock|g" /etc/php/fpm/php-fpm.d/www.conf && \
+    sed -i -e "s|;listen.owner =|listen.owner =|g" /etc/php/fpm/php-fpm.d/www.conf && \
+    sed -i -e "s|;listen.group =|listen.group =|g" /etc/php/fpm/php-fpm.d/www.conf && \
+    sed -i -e "s|;listen.mode =|listen.mode =|g" /etc/php/fpm/php-fpm.d/www.conf && \
+    sed -i -e "s|;access.log = log/\$pool.access.log|access.log = /proc/self/fd/2|g" /etc/php/fpm/php-fpm.d/www.conf && \
+    sed -i -e "s|;php_admin_value\[error_log\] = /var/log/fpm-php.www.log|php_admin_value\[error_log\] = /proc/self/fd/2|g" /etc/php/fpm/php-fpm.d/www.conf && \
 
 ADD root /
 
