@@ -78,7 +78,7 @@ RUN \
   && strip -s /usr/bin/php \
   
   # remove PHP dev dependencies
-  && apk del $buildDeps \
+  && apk del {$build_pkgs} \
   
   # install composer
   && curl -sS https://getcomposer.org/installer | php \
