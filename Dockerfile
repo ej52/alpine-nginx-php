@@ -1,83 +1,95 @@
 FROM ej52/alpine-nginx:latest
 MAINTAINER Elton Renda "https://github.com/ej52"
 
-ENV PHP_VERSION=7.0.1
+ENV PHP_VERSION=7.0.2
 
 RUN \
-  apk --no-cache add ca-certificates wget openssl curl curl-dev grep libtool imagemagick-dev gmp-dev libmcrypt-dev \
-  freetype-dev libxpm-dev libwebp-dev libjpeg-turbo-dev libjpeg bzip2-dev openssl-dev krb5-dev libxml2-dev \
-  yaml-dev build-base tar make autoconf re2c bison && \
-  cd /tmp && \
-  wget https://github.com/php/php-src/archive/php-${PHP_VERSION}.tar.gz && \
-  tar xzf php-${PHP_VERSION}.tar.gz && \
-  cd /tmp/php-src-php-${PHP_VERSION} && \
-  ./buildconf --force && \
-  ./configure \
-  	--prefix=/usr \
-  	--sysconfdir=/etc/php/fpm \
-    --with-config-file-path=/etc/php/fpm \
-    --with-config-file-scan-dir=/etc/php/fpm/conf.d \
-    --enable-fpm \
-    --with-fpm-user=www-data \
-    --with-fpm-group=www-data \
-    --disable-cgi \
-    --enable-mysqlnd \
-    --enable-exif \
-    --enable-ftp \
-    --enable-mbstring \
-    --enable-zip \
-    --enable-bcmath \
-    --enable-pcntl \
-    --enable-pdo \
-    --enable-session \
-    --enable-simplexml \
-    --enable-soap \
-    --enable-tokenizer \
-    --enable-xml \
-    --enable-xmlreader \
-    --enable-xmlwriter \
-    --enable-sockets \
-    --enable-fileinfo \
-    --enable-sysvmsg \
-    --enable-sysvsem \
-    --enable-sysvshm \
-    --with-curl \
-    --with-mcrypt \
-    --with-iconv \
-    --with-gmp \
-    --with-gd \
-    --with-jpeg-dir=/usr \
-    --with-webp-dir=/usr \
-    --with-png-dir=/usr \
-    --with-zlib-dir=/usr \
-    --with-xpm-dir=/usr \
-    --with-freetype-dir=/usr \
-    --enable-gd-native-ttf \
-    --enable-gd-jis-conv \
-    --with-openssl \
-    --with-zlib \
-    --with-zlib-dir=/usr \
-    --with-bz2=/usr && \
-  make && \
-  make install && \
-  cp php.ini-production  /etc/php/fpm/php.ini && \
-  mv /etc/php/fpm/php-fpm.conf.default /etc/php/fpm/php-fpm.conf && \
-  mv /etc/php/fpm/php-fpm.d/www.conf.default /etc/php/fpm/php-fpm.d/www.conf && \
-  rm -rf /tmp/* && \
-  apk del build-base libtool bash perl gcc g++ wget grep tar make autoconf re2c bison curl-dev openssl-dev && \
-  rm -rf /var/cache/apk/* && \
-  rm -rf /var/www/*
+  # Install build and runtime packages
+  build_pkgs="build-base re2c file readline-dev autoconf binutils bison \
+  libxml2-dev curl-dev freetype-dev openssl-dev libjpeg-turbo-dev libpng-dev \
+  libwebp-dev libmcrypt-dev gmp-dev icu-dev libmemcached-dev wget git" \
+  && runtime_pkgs="curl zlib tar make libxml2 readline freetype openssl \
+  libjpeg-turbo libpng libmcrypt libwebp icu" \
+  && apk --no-cache add ${build_pkgs} ${runtime_pkgs} \
   
-RUN sed -i -e "s|;cgi.fix_pathinfo=1|cgi.fix_pathinfo=0|g" /etc/php/fpm/php.ini && \
-    sed -i -e 's|=NONE/|=|g' /etc/php/fpm/php-fpm.conf && \
-    sed -i -e 's|;daemonize = yes|daemonize = no|g' /etc/php/fpm/php-fpm.conf && \
-    sed -i -e "s|listen = 127.0.0.1:9000|listen = /var/run/php7-fpm.sock|g" /etc/php/fpm/php-fpm.d/www.conf && \
-    sed -i -e "s|;listen.owner =|listen.owner =|g" /etc/php/fpm/php-fpm.d/www.conf && \
-    sed -i -e "s|;listen.group =|listen.group =|g" /etc/php/fpm/php-fpm.d/www.conf && \
-    sed -i -e "s|;listen.mode =|listen.mode =|g" /etc/php/fpm/php-fpm.d/www.conf && \
-    sed -i -e "s|;access.log = log/\$pool.access.log|access.log = /proc/self/fd/2|g" /etc/php/fpm/php-fpm.d/www.conf && \
-    sed -i -e "s|;php_admin_value\[error_log\] = /var/log/fpm-php.www.log|php_admin_value\[error_log\] = /proc/self/fd/2|g" /etc/php/fpm/php-fpm.d/www.conf && \
-
+  # download unpack php-src
+  && mkdir /tmp/php && cd /tmp/php \
+  && wget https://github.com/php/php-src/archive/php-${PHP_VERSION}.tar.gz \
+  && tar xzf php-${PHP_VERSION}.tar.gz \
+  && cd php-src-php-${PHP_VERSION} \
+  
+  #compile
+  && ./buildconf --force \
+  && ./configure \
+      --prefix=/usr \
+      --sysconfdir=/etc/php \
+      --with-config-file-path=/etc/php \
+      --with-config-file-scan-dir=/etc/php/conf.d \
+      --enable-fpm --with-fpm-user=www-data --with-fpm-group=www-data \
+      --enable-cli \
+      --enable-mbstring \
+      --enable-zip \
+      --enable-ftp \
+      --enable-bcmath \
+      --enable-opcache \
+      --enable-pcntl \
+      --enable-mysqlnd \
+      --enable-gd-native-ttf \
+      --enable-sockets \
+      --enable-exif \
+      --enable-soap \
+      --enable-calendar \
+      --enable-intl \
+      --enable-json \
+      --enable-dom \
+      --enable-libxml --with-libxml-dir=/usr \
+      --enable-xml \
+      --enable-xmlreader \
+      --enable-phar \
+      --enable-session \
+      --enable-sysvmsg \
+      --enable-sysvsem \
+      --enable-sysvshm \
+      --disable-cgi \
+      --disable-debug \
+      --disable-rpath \
+      --disable-static \
+      --disable-phpdbg \
+      --with-libdir=/lib/x86_64-linux-gnu \
+      --with-curl \
+      --with-mcrypt \
+      --with-iconv \
+      --with-gd --with-jpeg-dir=/usr --with-webp-dir=/usr --with-png-dir=/usr \
+      --with-freetype-dir=/usr \
+      --with-zlib --with-zlib-dir=/usr \
+      --with-openssl \
+      --with-mhash \
+      --with-pcre-regex \
+      --with-pdo-mysql \
+      --with-mysqli \
+      --with-readline \
+      --with-xmlrpc \
+      --with-pear \
+  && make \
+  && make install \
+  && make clean \
+  
+  # strip debug symbols from the binary (GREATLY reduces binary size)
+  && strip -s /usr/bin/php \
+  
+  # remove PHP dev dependencies
+  && apk del ${build_pkgs} \
+  
+  # install composer
+  && curl -sS https://getcomposer.org/installer | php \
+  && mv composer.phar /usr/local/bin/composer \
+  
+   # other clean up
+  && cd / \
+  && rm -rf /var/cache/apk/* \
+  && rm -rf /tmp/* \
+  && rm -rf /var/www/*
+  
 ADD root /
 
 EXPOSE 80 443
