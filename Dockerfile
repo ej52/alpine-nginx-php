@@ -85,7 +85,7 @@ RUN \
   && mv composer.phar /usr/local/bin/composer \
   
   # create session dir
-  && mkdir /var/lib/php7/sessions \
+  && mkdir -p /var/lib/php7/sessions \
   
    # other clean up
   && cd / \
