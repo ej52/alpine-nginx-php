@@ -86,6 +86,7 @@ RUN \
   
   # create session dir
   && mkdir -p /var/lib/php7/sessions \
+  && chown -R www-data:www-data /var/lib/php7/sessions \
   
    # other clean up
   && cd / \
