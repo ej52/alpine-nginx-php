@@ -1,7 +1,7 @@
 FROM ej52/alpine-nginx:latest
 MAINTAINER Elton Renda "https://github.com/ej52"
 
-ENV PHP_VERSION=7.0.2
+ENV PHP_VERSION=7.1.3
 
 RUN \
   # Install build and runtime packages
@@ -94,6 +94,6 @@ RUN \
   && rm -rf /tmp/* \
   && rm -rf /var/www/*
   
-ADD root /
+COPY root /
 
 EXPOSE 80 443
