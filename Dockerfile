@@ -3,14 +3,17 @@ MAINTAINER Elton Renda "https://github.com/ej52"
 
 ENV PHP_VERSION=7.1.3
 
+# Install runtime dependancies
 RUN \
-  # Install build and runtime packages
-  build_pkgs="build-base re2c file readline-dev autoconf binutils bison \
+  apk add --no-cache --virtual .run-deps \
+  curl zlib tar make libxml2 readline freetype openssl libjpeg-turbo libpng libmcrypt libwebp icu
+
+RUN \
+  # Install build dependancies
+  apk add --no-cache --virtual .build-deps \
+  build-base re2c file readline-dev autoconf binutils bison \
   libxml2-dev curl-dev freetype-dev openssl-dev libjpeg-turbo-dev libpng-dev \
-  libwebp-dev libmcrypt-dev gmp-dev icu-dev libmemcached-dev wget git" \
-  && runtime_pkgs="curl zlib tar make libxml2 readline freetype openssl \
-  libjpeg-turbo libpng libmcrypt libwebp icu" \
-  && apk --no-cache add ${build_pkgs} ${runtime_pkgs} \
+  libwebp-dev libmcrypt-dev gmp-dev icu-dev libmemcached-dev wget git \
   
   # download unpack php-src
   && mkdir /tmp/php && cd /tmp/php \
@@ -77,8 +80,8 @@ RUN \
   # strip debug symbols from the binary (GREATLY reduces binary size)
   && strip -s /usr/bin/php \
   
-  # remove PHP dev dependencies
-  && apk del ${build_pkgs} \
+  # remove build dependencies
+  && apk del .build-deps \
   
   # install composer
   && curl -sS https://getcomposer.org/installer | php \
