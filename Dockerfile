@@ -3,6 +3,16 @@ MAINTAINER Elton Renda "https://github.com/ej52"
 
 ENV PHP_VERSION=7.1.3
 
+RUN set -x \
+  # ensure www-data user exists
+  # 82 is the standard uid/gid for "www-data" in Alpine
+	&& addgroup -g 82 -S www-data \
+	&& adduser -u 82 -D -S -G www-data www-data \
+
+  # create session dir and set owner to www-data
+  && mkdir -p /var/lib/php7/sessions \
+  && chown -R www-data:www-data /var/lib/php7/sessions \
+
 # Install runtime dependancies
 RUN \
   apk add --no-cache --virtual .run-deps \
@@ -14,13 +24,13 @@ RUN \
   build-base re2c file readline-dev autoconf binutils bison \
   libxml2-dev curl-dev freetype-dev openssl-dev libjpeg-turbo-dev libpng-dev \
   libwebp-dev libmcrypt-dev gmp-dev icu-dev libmemcached-dev wget git \
-  
+
   # download unpack php-src
   && mkdir /tmp/php && cd /tmp/php \
   && wget https://github.com/php/php-src/archive/php-${PHP_VERSION}.tar.gz \
   && tar xzf php-${PHP_VERSION}.tar.gz \
   && cd php-src-php-${PHP_VERSION} \
-  
+
   #compile
   && ./buildconf --force \
   && ./configure \
@@ -76,27 +86,23 @@ RUN \
   && make \
   && make install \
   && make clean \
-  
+
   # strip debug symbols from the binary (GREATLY reduces binary size)
   && strip -s /usr/bin/php \
-  
+
   # remove build dependencies
   && apk del .build-deps \
-  
+
   # install composer
   && curl -sS https://getcomposer.org/installer | php \
   && mv composer.phar /usr/local/bin/composer \
-  
-  # create session dir
-  && mkdir -p /var/lib/php7/sessions \
-  && chown -R www-data:www-data /var/lib/php7/sessions \
-  
-   # other clean up
+
+  # other clean up
   && cd / \
   && rm -rf /var/cache/apk/* \
   && rm -rf /tmp/* \
   && rm -rf /var/www/*
-  
+
 COPY root /
 
 EXPOSE 80 443
