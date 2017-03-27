@@ -4,11 +4,6 @@ MAINTAINER Elton Renda "https://github.com/ej52"
 ENV PHP_VERSION=7.1.3
 
 RUN set -x \
-  # ensure www-data user exists
-  # 82 is the standard uid/gid for "www-data" in Alpine
-	&& addgroup -g 82 -S www-data \
-	&& adduser -u 82 -D -S -G www-data www-data \
-
   # create session dir and set owner to www-data
   && mkdir -p /var/lib/php7/sessions \
   && chown -R www-data:www-data /var/lib/php7/sessions \
