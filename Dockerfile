@@ -1,4 +1,4 @@
-FROM ej52/alpine-nginx:latest
+FROM ej52/alpine-nginx:1.11.10
 MAINTAINER Elton Renda "https://github.com/ej52"
 
 ENV PHP_VERSION=7.1.3
