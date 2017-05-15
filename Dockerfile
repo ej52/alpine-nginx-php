@@ -6,7 +6,7 @@ ENV PHP_VERSION=7.1.3
 RUN set -x \
   # create session dir and set owner to www-data
   && mkdir -p /var/lib/php7/sessions \
-  && chown -R www-data:www-data /var/lib/php7/sessions \
+  && chown -R www-data:www-data /var/lib/php7/sessions
 
 # Install runtime dependancies
 RUN \
