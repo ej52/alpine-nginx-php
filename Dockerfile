@@ -1,7 +1,5 @@
-FROM ej52/alpine-nginx:latest
-MAINTAINER Elton Renda "https://github.com/ej52"
-
-ENV PHP_VERSION=7.1.3
+FROM ej52/alpine-nginx:3.4
+LABEL maintainer Elton Renda "elton@ebrdev.co.za"
 
 RUN set -x \
   # create session dir and set owner to www-data
@@ -22,9 +20,9 @@ RUN \
 
   # download unpack php-src
   && mkdir /tmp/php && cd /tmp/php \
-  && wget https://github.com/php/php-src/archive/php-${PHP_VERSION}.tar.gz \
-  && tar xzf php-${PHP_VERSION}.tar.gz \
-  && cd php-src-php-${PHP_VERSION} \
+  && wget https://github.com/php/php-src/archive/php-7.1.3.tar.gz \
+  && tar xzf php-7.1.3.tar.gz \
+  && cd php-src-php-7.1.3 \
 
   #compile
   && ./buildconf --force \
