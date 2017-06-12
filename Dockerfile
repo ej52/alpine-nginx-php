@@ -1,4 +1,4 @@
-FROM ej52/alpine-nginx:3.4
+FROM ej52/alpine-nginx:1.13.1
 LABEL maintainer Elton Renda "elton@ebrdev.co.za"
 
 RUN set -x \
